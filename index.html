@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agriculture Industry Work Form</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #6bd0e7;
+        padding: 30px;
+      }
+
+      .container {
+        max-width: 850px;
+        margin: 10px auto;
+        background: rgba(228, 255, 254, 0.97);
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .logo img {
+        width: 350px;
+      }
+
+      h2 {
+        text-align: center;
+        color: #345e36;
+      }
+
+      label {
+        font-weight: bold;
+        display: block;
+        margin-top: 15px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+
+      .section {
+        margin-top: 30px;
+      }
+
+      .crop-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .crop-row label {
+        flex-grow: 1;
+        text-align: left;
+        font-weight: normal;
+        margin: 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .crop-row label .number {
+        width: 25px;
+        display: inline-block;
+        font-weight: bold;
+        margin-right: 6px;
+      }
+
+      .crop-row input[type="checkbox"] {
+        margin: 0;
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        vertical-align: middle;
+      }
+
+      .work-done-dropdown {
+        margin-left: 40px;
+        margin-top: 8px;
+        padding-left: 15px;
+        border-left: 2px solid #ccc;
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+        max-width: 100%;
+      }
+
+      .work-done-dropdown label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: normal;
+        width: 100%;
+      }
+
+      .work-done-dropdown input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+      }
+
+      .manhour-input {
+        margin-top: 5px;
+        width: 120px;
+        padding: 6px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      .save-btn {
+        margin-top: 10px;
+        align-self: flex-start;
+        background-color: #2196f3;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .save-btn:hover {
+        background-color: #1976d2;
+      }
+
+      .other-section label {
+        font-weight: bold;
+        margin-top: 20px;
+      }
+
+      .task-list {
+        margin-left: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        width: 100%;
+      }
+
+      .task-list label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: normal;
+        width: 100%;
+      }
+
+      .task-list input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+      }
+
+      .yes-no-group {
+        display: flex;
+        gap: 20px;
+        margin-top: 5px;
+      }
+
+      .yes-no-group label {
+        font-weight: normal;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+      }
+
+      .estate-task-container {
+        margin-left: 20px;
+        margin-top: 6px;
+        padding-left: 15px;
+        border-left: 2px solid #ccc;
+        display: none;
+        flex-direction: column;
+        gap: 8px;
+        max-width: 100%;
+      }
+
+      .estate-crop-list label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-weight: normal;
+      }
+
+      .estate-crop-list input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+      }
+
+      .submit-btn {
+        margin-top: 30px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      .submit-btn:hover {
+        background-color: #388e3c;
+      }
+
+      .loading {
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      .debug-info {
+        margin-top: 20px;
+        padding: 10px;
+        background: #f0f0f0;
+        border-radius: 5px;
+        font-family: monospace;
+        font-size: 12px;
+        display: none;
+      }
+
+      .debug-toggle {
+        margin-top: 10px;
+        background-color: #ff9800;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <img src="deft.png" alt="Company Logo" />
+      </div>
+
+      <h2>Daily Work Update Of Olatpur Farm</h2>
+
+      <form id="agriForm">
+        <label>Date:</label>
+        <input type="text" id="date" name="date" readonly />
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required />
+
+        <div class="section" id="cropSection">
+          <label>Types of Crops:</label>
+        </div>
+
+        <div class="section other-section">
+          <label>Other Works of the Farm:</label>
+
+          <div class="pond-section">
+            <strong>1. Pond</strong>
+            <div class="task-list">
+              <label
+                ><input type="checkbox" name="pond-task" value="Pond Digging" />
+                Pond Digging</label
+              >
+              <label
+                ><input
+                  type="checkbox"
+                  name="pond-task"
+                  value="Other Pond Related Work"
+                />
+                Other Pond Related Work</label
+              >
+              <label>Man Hours for Pond:</label>
+              <input type="text" name="pond-hours" placeholder="Enter hours" />
+            </div>
+          </div>
+
+          <div class="electrical-section">
+            <strong>2. Electrical Work</strong>
+            <div class="yes-no-group">
+              <label
+                ><input type="radio" name="electrical" value="Yes" /> Yes</label
+              >
+              <label
+                ><input type="radio" name="electrical" value="No" checked />
+                No</label
+              >
+            </div>
+          </div>
+
+          <div class="estate-section">
+            <strong>3. Estate</strong>
+            <div class="task-list">
+              <div>
+                <label
+                  ><input
+                    type="checkbox"
+                    name="estate-task"
+                    value="Clearing"
+                    id="estate-clearing"
+                  />
+                  Clearing</label
+                >
+                <div id="clearing-crops" class="estate-task-container">
+                  <label>Select Crops for Clearing:</label>
+                  <div class="estate-crop-list" id="clearing-crop-list"></div>
+                  <label>Man Hours for Clearing:</label>
+                  <input
+                    type="text"
+                    name="clearing-hours"
+                    placeholder="Enter hours"
+                  />
+                  <button type="button" class="save-btn" id="save-clearing">
+                    Save
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  ><input
+                    type="checkbox"
+                    name="estate-task"
+                    value="Fencing"
+                    id="estate-fencing"
+                  />
+                  Fencing</label
+                >
+                <div id="fencing-crops" class="estate-task-container">
+                  <label>Select Crops for Fencing:</label>
+                  <div class="estate-crop-list" id="fencing-crop-list"></div>
+                  <label>Man Hours for Fencing:</label>
+                  <input
+                    type="text"
+                    name="fencing-hours"
+                    placeholder="Enter hours"
+                  />
+                  <button type="button" class="save-btn" id="save-fencing">
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="irrigation-section">
+            <strong>4. Irrigation System</strong>
+            <div class="yes-no-group">
+              <label
+                ><input type="radio" name="irrigation" value="Yes" /> Yes</label
+              >
+              <label
+                ><input type="radio" name="irrigation" value="No" checked />
+                No</label
+              >
+            </div>
+          </div>
+
+          <div class="other-works-section">
+            <strong>5. Other Works</strong>
+            <input
+              type="text"
+              name="other-works"
+              placeholder="Describe other works"
+            />
+          </div>
+
+          <div class="overtime-section">
+            <strong>6. Overtime</strong>
+            <input
+              type="text"
+              name="other-overtime"
+              placeholder="Enter overtime hours"
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit</button>
+        <button type="button" class="debug-toggle" onclick="toggleDebug()">
+          Show Debug Info
+        </button>
+
+        <div id="debugInfo" class="debug-info"></div>
+      </form>
+    </div>
+
+    <script>
+      // Set current date
+      document.getElementById("date").value = new Date().toLocaleDateString();
+
+      const crops = [
+        "Tuberose",
+        "Marigold",
+        "Pulses",
+        "Lemon",
+        "Hibiscus",
+        "Paddy",
+        "Mango",
+        "Jackfruit",
+        "Coconut",
+        "Banana",
+        "Kamini",
+      ];
+      const workDoneOptions = [
+        "Soil Preparation",
+        "Fertilisation",
+        "Bed Preparation",
+        "Irrigation",
+        "Sowing",
+        "Deweeding",
+        "Harvesting",
+        "Packing and Storing",
+        "Transporting",
+      ];
+
+      const cropSection = document.getElementById("cropSection");
+
+      // Generate crop checkboxes and work done dropdowns
+      crops.forEach((crop, index) => {
+        const cropRow = document.createElement("div");
+        cropRow.classList.add("crop-row");
+
+        const cropCheckbox = document.createElement("input");
+        cropCheckbox.type = "checkbox";
+        cropCheckbox.id = `crop-checkbox-${index}`;
+        cropCheckbox.name = "crop-type";
+        cropCheckbox.value = crop;
+
+        const cropLabel = document.createElement("label");
+        cropLabel.htmlFor = cropCheckbox.id;
+
+        const numberSpan = document.createElement("span");
+        numberSpan.textContent = index + 1 + ".";
+        numberSpan.classList.add("number");
+
+        cropLabel.appendChild(numberSpan);
+        cropLabel.appendChild(document.createTextNode(crop));
+        cropRow.appendChild(cropCheckbox);
+        cropRow.appendChild(cropLabel);
+
+        const dropdown = document.createElement("div");
+        dropdown.classList.add("work-done-dropdown");
+
+        workDoneOptions.forEach((work, wIndex) => {
+          const workLabel = document.createElement("label");
+          const workCheckbox = document.createElement("input");
+          workCheckbox.type = "checkbox";
+          workCheckbox.name = `work-done-${index}`;
+          workCheckbox.value = work;
+
+          workLabel.appendChild(workCheckbox);
+          workLabel.appendChild(document.createTextNode(work));
+          dropdown.appendChild(workLabel);
+
+          if (wIndex === workDoneOptions.length - 1) {
+            const manHourInput = document.createElement("input");
+            manHourInput.type = "text";
+            manHourInput.name = `man-hours-${index}`;
+            manHourInput.placeholder = "Enter man hours";
+            manHourInput.classList.add("manhour-input");
+            dropdown.appendChild(manHourInput);
+          }
+        });
+
+        const saveBtn = document.createElement("button");
+        saveBtn.type = "button";
+        saveBtn.textContent = "Save";
+        saveBtn.classList.add("save-btn");
+        dropdown.appendChild(saveBtn);
+
+        cropSection.appendChild(cropRow);
+        cropSection.appendChild(dropdown);
+
+        cropCheckbox.addEventListener("change", () => {
+          dropdown.style.display = cropCheckbox.checked ? "flex" : "none";
+        });
+
+        saveBtn.addEventListener("click", () => {
+          dropdown.style.display = "none";
+          cropCheckbox.checked = true;
+        });
+      });
+
+      // Populate estate crops
+      function populateEstateCrops(containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        crops.forEach((crop) => {
+          const label = document.createElement("label");
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.name = `${containerId}-crop`;
+          checkbox.value = crop;
+          label.appendChild(checkbox);
+          label.appendChild(document.createTextNode(crop));
+          container.appendChild(label);
+        });
+      }
+
+      populateEstateCrops("clearing-crop-list");
+      populateEstateCrops("fencing-crop-list");
+
+      // Estate work event listeners
+      document
+        .getElementById("estate-clearing")
+        .addEventListener("change", (e) => {
+          document.getElementById("clearing-crops").style.display = e.target
+            .checked
+            ? "flex"
+            : "none";
+        });
+
+      document
+        .getElementById("estate-fencing")
+        .addEventListener("change", (e) => {
+          document.getElementById("fencing-crops").style.display = e.target
+            .checked
+            ? "flex"
+            : "none";
+        });
+
+      document.getElementById("save-clearing").addEventListener("click", () => {
+        document.getElementById("clearing-crops").style.display = "none";
+        document.getElementById("estate-clearing").checked = true;
+      });
+
+      document.getElementById("save-fencing").addEventListener("click", () => {
+        document.getElementById("fencing-crops").style.display = "none";
+        document.getElementById("estate-fencing").checked = true;
+      });
+
+      // Debug function
+      function toggleDebug() {
+        const debugInfo = document.getElementById("debugInfo");
+        debugInfo.style.display =
+          debugInfo.style.display === "none" ? "block" : "none";
+      }
+
+      function updateDebugInfo(message) {
+        const debugInfo = document.getElementById("debugInfo");
+        debugInfo.innerHTML +=
+          new Date().toLocaleTimeString() + ": " + message + "<br>";
+        debugInfo.scrollTop = debugInfo.scrollHeight;
+      }
+
+      // Form submission handler
+      document
+        .getElementById("agriForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          updateDebugInfo("Form submission started");
+          console.log("Form submission started");
+
+          // Show loading state
+          const submitBtn = this.querySelector(".submit-btn");
+          const originalText = submitBtn.textContent;
+          submitBtn.textContent = "Submitting...";
+          submitBtn.disabled = true;
+          this.classList.add("loading");
+
+          const formData = new FormData(this);
+
+          // Process crop entries
+          const entries = crops
+            .map((crop, i) => {
+              if (formData.getAll("crop-type").includes(crop)) {
+                const workDone = formData.getAll(`work-done-${i}`);
+                const manHours = formData.get(`man-hours-${i}`) || "";
+
+                updateDebugInfo(
+                  `Crop ${crop}: work=${workDone.join(", ")}, hours=${manHours}`
+                );
+                console.log(
+                  `Crop ${crop}: work=${workDone}, hours=${manHours}`
+                );
+
+                return {
+                  crop,
+                  workDone: workDone,
+                  manHours: manHours,
+                };
+              }
+              return null;
+            })
+            .filter(Boolean);
+
+          // Process estate work
+          let estateWork = [];
+
+          // Check clearing work
+          if (formData.getAll("estate-task").includes("Clearing")) {
+            const clearingCrops = formData.getAll("clearing-crop-list-crop");
+            const clearingHours = formData.get("clearing-hours") || "";
+            if (clearingCrops.length > 0) {
+              estateWork.push(
+                `Clearing (${clearingCrops.join(
+                  ", "
+                )}) - ${clearingHours} hours`
+              );
+            } else {
+              estateWork.push("Clearing");
+            }
+          }
+
+          // Check fencing work
+          if (formData.getAll("estate-task").includes("Fencing")) {
+            const fencingCrops = formData.getAll("fencing-crop-list-crop");
+            const fencingHours = formData.get("fencing-hours") || "";
+            if (fencingCrops.length > 0) {
+              estateWork.push(
+                `Fencing (${fencingCrops.join(", ")}) - ${fencingHours} hours`
+              );
+            } else {
+              estateWork.push("Fencing");
+            }
+          }
+
+          // Create payload
+          // const payload = {
+          //   date: formData.get("date") || "",
+          //   name: formData.get("name") || "",
+          //   pond: formData.get("pond-hours") || "",
+          //   electrical: formData.get("electrical") || "No",
+          //   estate: estateWork.join("; "),
+          //   irrigation: formData.get("irrigation") || "No",
+          //   otherWorks: formData.get("other-works") || "",
+          //   overtime: formData.get("other-overtime") || "",
+          //   entries: entries,
+          // };
+
+          const payload = new FormData();
+          payload.append("date", formData.get("date") || "");
+          payload.append("name", formData.get("name") || "");
+          payload.append("pond", formData.get("pond-hours") || "");
+          payload.append("electrical", formData.get("electrical") || "No");
+          payload.append("estate", estateWork.join("; "));
+          payload.append("irrigation", formData.get("irrigation") || "No");
+          payload.append("otherWorks", formData.get("other-works") || "");
+          payload.append("overtime", formData.get("other-overtime") || "");
+          payload.append(
+            "entries",
+            JSON.stringify(entries.map((e) => ({ ...e })))
+          );
+          payload.append("entriesCount", entries.length);
+          payload.append("sheetName", "FarmWork");
+
+          // updateDebugInfo("Payload created: " + JSON.stringify(payload));
+          // console.log("Payload being sent:", JSON.stringify(payload, null, 2));
+
+          // REPLACE THIS URL WITH YOUR ACTUAL GOOGLE APPS SCRIPT WEB APP URL
+          const SCRIPT_URL =
+            "https://script.google.com/macros/s/AKfycbzyYPewjijKJ_K7n7Q-r3SMB3uCZDst_-OkOQTU0rKkMDW0etzjazNY85vUD7z4BraIBA/exec";
+
+          updateDebugInfo("Sending request to: " + SCRIPT_URL);
+
+          // Submit to Google Apps Script
+          fetch(SCRIPT_URL, {
+            method: "POST",
+            body: payload,
+          })
+            .then((response) => {
+              updateDebugInfo("Response received. Status: " + response.status);
+              console.log("Response received:", response);
+
+              // Try to read the response
+              return response.text();
+            })
+            .then((responseText) => {
+              updateDebugInfo("Response text: " + responseText);
+              console.log("Response text:", responseText);
+
+              try {
+                const responseData = JSON.parse(responseText);
+                if (responseData.success) {
+                  alert("Form submitted successfully!");
+                  this.reset();
+                  document.getElementById("date").value =
+                    new Date().toLocaleDateString();
+                } else {
+                  alert("Error: " + responseData.message);
+                }
+              } catch (parseError) {
+                updateDebugInfo(
+                  "Could not parse response as JSON: " + parseError.message
+                );
+                // Assume success if we can't parse the response
+                alert("Form submitted successfully!");
+                this.reset();
+                document.getElementById("date").value =
+                  new Date().toLocaleDateString();
+              }
+            })
+            .catch((err) => {
+              updateDebugInfo("Fetch error: " + err.message);
+              console.error("Submission error:", err);
+              alert(
+                "There was an error submitting the form. Please try again."
+              );
+            })
+            .finally(() => {
+              // Reset loading state
+              submitBtn.textContent = originalText;
+              submitBtn.disabled = false;
+              this.classList.remove("loading");
+            });
+        });
+    </script>
+  </body>
+</html>
